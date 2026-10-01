@@ -1,0 +1,6 @@
+{
+  "name": "E-Rapot Tahfidz Daarul Abidin",
+  "description": "Sistem Pencatatan Nilai Siswa PTS dan PAS serta Cetak Rapot Resmi Ma'had Tahfidz Qur'an Daarul Abidin format A4 Mobile-First PWA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Printer, Download, ArrowLeft, Share2, CheckCircle2, Award, BookCheck, User, Calendar } from 'lucide-react';
-import { Student, SubjectCompetency, SubjectId } from '../types';
+import { Student, SubjectCompetency, SubjectId, SchoolSettings } from '../types';
 import { computeStudentReport } from '../services/storageService';
 import { DEFAULT_KKM } from '../data/defaultData';
 
@@ -8,6 +8,7 @@ interface ReportCardViewProps {
   student: Student;
   competencies: Record<SubjectId, SubjectCompetency>;
   allStudents?: Student[];
+  settings?: SchoolSettings;
   onBackToInput: () => void;
   onSelectAnotherStudent?: () => void;
 }
@@ -16,6 +17,7 @@ export const ReportCardView: React.FC<ReportCardViewProps> = ({
   student,
   competencies,
   allStudents,
+  settings,
   onBackToInput,
   onSelectAnotherStudent,
 }) => {
@@ -86,7 +88,7 @@ export const ReportCardView: React.FC<ReportCardViewProps> = ({
                 <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center">
                   <img
                     src="/logo.svg"
-                    alt="Logo Ma'had Tahfidz Qur'an Daarul Abidin"
+                    alt="Logo Ma'had Tahfidz Qur'an Darul Abidin"
                     className="w-full h-full object-contain"
                   />
                 </div>
@@ -94,10 +96,10 @@ export const ReportCardView: React.FC<ReportCardViewProps> = ({
 
               {/* Title & Address */}
               <h1 className="text-base sm:text-lg font-black tracking-wide text-slate-950 uppercase leading-snug">
-                MA'HAD TAHFIDZ QUR'AN DAARUL ABIDIN
+                MA'HAD TAHFIDZ QUR'AN DARUL ABIDIN
               </h1>
               <p className="text-[11px] sm:text-xs font-semibold text-slate-700 tracking-tight mt-0.5">
-                KP. GUNTENG RT 03 RW 09 DS. BOJONG KEC. KARANGTENGAH KAB. CIANJUR
+                {settings?.alamatKop || 'KP. GUNTENG RT 03 RW 09 DS. BOJONG KEC. KARANGTENGAH KAB. CIANJUR'}
               </p>
               
               <div className="inline-block mt-2 px-3 py-0.5 rounded-md bg-slate-100 border border-slate-300">
@@ -115,7 +117,7 @@ export const ReportCardView: React.FC<ReportCardViewProps> = ({
               </div>
               <div className="flex">
                 <span className="w-28 font-bold text-slate-600 shrink-0">Kelas / Halaqoh</span>
-                <span className="font-semibold text-slate-900">: {student.kelas}</span>
+                <span className="font-semibold text-slate-900">: {student.kelas || settings?.namaHalaqoh || 'Kelas VII - Halaqoh Utsman bin Affan'}</span>
               </div>
               <div className="flex">
                 <span className="w-28 font-bold text-slate-600 shrink-0">Nomor Induk (NIS)</span>
@@ -123,7 +125,7 @@ export const ReportCardView: React.FC<ReportCardViewProps> = ({
               </div>
               <div className="flex">
                 <span className="w-28 font-bold text-slate-600 shrink-0">Semester / TA</span>
-                <span className="font-semibold text-slate-900">: {student.semester} / {student.tahunAjaran}</span>
+                <span className="font-semibold text-slate-900">: {student.semester || settings?.semester || 'Genap'} / {student.tahunAjaran || settings?.tahunAjaran || '2025/2026'}</span>
               </div>
               {rankInfo && rankInfo.rank <= 3 && (
                 <div className="col-span-2 pt-1.5 mt-1 border-t border-slate-200 flex items-center justify-between">
@@ -320,7 +322,7 @@ export const ReportCardView: React.FC<ReportCardViewProps> = ({
           {/* 6. KOLOM TANDA TANGAN RESMI (3 PIHAK) */}
           <div className="pt-3 avoid-break">
             <div className="text-right text-[11px] font-semibold text-slate-800 mb-2">
-              Cianjur, {student.tanggalRapot || '20 Juni 2026'}
+              {settings?.tempatPenerbitan || 'Cianjur'}, {student.tanggalRapot || settings?.tanggalPenerbitan || '20 Juni 2026'}
             </div>
 
             <div className="grid grid-cols-3 text-center text-xs">
@@ -336,25 +338,33 @@ export const ReportCardView: React.FC<ReportCardViewProps> = ({
                   <span className="text-[10px] text-slate-400 italic print:hidden">[ Tanda Tangan ]</span>
                 </div>
                 <p className="font-bold text-slate-900 underline">
-                  {student.namaMusyrif || 'Ustadz Ahmad Fauzi, S.Pd.I'}
+                  {student.namaMusyrif || settings?.namaMusyrif || 'Ustadz Ahmad Fauzi, S.Pd.I'}
                 </p>
+                {settings?.nipMusyrif && (
+                  <p className="text-[9px] text-slate-500 mt-0.5">{settings.nipMusyrif}</p>
+                )}
               </div>
 
               <div>
                 <p className="font-medium text-slate-700">Mengetahui,</p>
-                <p className="font-bold text-slate-800 text-[11px]">Mudir Ma'had Daarul Abidin</p>
+                <p className="font-bold text-slate-800 text-[11px]">
+                  {settings?.jabatanMudir || "Mudir Ma'had Darul Abidin"}
+                </p>
                 <div className="h-14 sm:h-18 flex items-center justify-center">
                   <span className="text-[10px] text-slate-400 italic print:hidden">[ Stempel & Ttd ]</span>
                 </div>
                 <p className="font-bold text-slate-900 underline">
-                  Ustadz Muhammad Ridwan, M.Ag
+                  {settings?.namaMudir || 'Ustadz Muhammad Ridwan, M.Ag'}
                 </p>
+                {settings?.nipMudir && (
+                  <p className="text-[9px] text-slate-500 mt-0.5">{settings.nipMudir}</p>
+                )}
               </div>
             </div>
 
             {/* Micro footer note for official document validation */}
             <div className="mt-4 pt-2 border-t border-slate-300 flex justify-between text-[9px] text-slate-500 font-mono">
-              <span>E-Rapot Ma'had Tahfidz Qur'an Daarul Abidin • ID: {student.id}</span>
+              <span>E-Rapot Ma'had Tahfidz Qur'an Darul Abidin • ID: {student.id}</span>
               <span>Dokumen Resmi • Standar Cetak Kertas A4</span>
             </div>
           </div>

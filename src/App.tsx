@@ -13,7 +13,7 @@ import { StudentManager } from './components/StudentManager';
 import { BottomNav } from './components/BottomNav';
 import { PWAInstallModal } from './components/PWAInstallModal';
 
-import { Student, SubjectCompetency, SubjectId, MusyrifUser } from './types';
+import { Student, SubjectCompetency, SubjectId, MusyrifUser, SchoolSettings } from './types';
 import { 
   getStoredStudents, 
   saveStoredStudents, 
@@ -22,17 +22,22 @@ import {
   getStoredCompetencies,
   saveStoredCompetencies,
   resetStoredCompetencies,
+  getStoredSchoolSettings,
+  saveStoredSchoolSettings,
+  resetStoredSchoolSettings,
   getStoredUser,
   setStoredUser,
   createNewStudent
 } from './services/storageService';
+import { SettingsDashboard } from './components/SettingsDashboard';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<MusyrifUser | null>(() => getStoredUser());
   const [students, setStudents] = useState<Student[]>(() => getStoredStudents());
   const [activeStudentId, setActiveId] = useState<string>(() => getActiveStudentId());
   const [competencies, setCompetencies] = useState<Record<SubjectId, SubjectCompetency>>(() => getStoredCompetencies());
-  const [activeTab, setActiveTab] = useState<'input' | 'rapot' | 'kompetensi' | 'santri'>('input');
+  const [schoolSettings, setSchoolSettings] = useState<SchoolSettings>(() => getStoredSchoolSettings());
+  const [activeTab, setActiveTab] = useState<'input' | 'rapot' | 'kompetensi' | 'santri' | 'pengaturan'>('input');
   const [showInstallModal, setShowInstallModal] = useState(false);
 
   // Sync active student
@@ -65,8 +70,9 @@ export default function App() {
 
   const handleAddNewStudent = () => {
     const newStudent = createNewStudent(
-      currentUser?.nama || 'Ustadz Ahmad Fauzi, S.Pd.I',
-      currentUser?.halaqoh || 'Halaqoh Utsman bin Affan'
+      schoolSettings.namaMusyrif || currentUser?.nama,
+      schoolSettings.namaHalaqoh || currentUser?.halaqoh,
+      schoolSettings
     );
     const updatedList = [newStudent, ...students];
     setStudents(updatedList);
@@ -105,18 +111,43 @@ export default function App() {
     setCompetencies({ ...defaultData });
   };
 
+  // School Settings handlers
+  const handleSaveSchoolSettings = (updated: SchoolSettings, syncToAll: boolean) => {
+    setSchoolSettings(updated);
+    saveStoredSchoolSettings(updated);
+
+    if (syncToAll && students.length > 0) {
+      const syncedStudents: Student[] = students.map((s) => ({
+        ...s,
+        kelas: updated.namaHalaqoh || s.kelas,
+        namaMusyrif: updated.namaMusyrif || s.namaMusyrif,
+        tanggalRapot: updated.tanggalPenerbitan || s.tanggalRapot,
+        semester: updated.semester || s.semester,
+        tahunAjaran: updated.tahunAjaran || s.tahunAjaran,
+      }));
+      setStudents(syncedStudents);
+      saveStoredStudents(syncedStudents);
+    }
+  };
+
+  const handleResetSchoolSettings = () => {
+    const defaultSettings = resetStoredSchoolSettings();
+    setSchoolSettings({ ...defaultSettings });
+  };
+
   // Backup & Restore
   const handleExportBackup = () => {
     const backupData = {
       exportDate: new Date().toISOString(),
-      institution: "Ma'had Tahfidz Qur'an Daarul Abidin",
+      institution: "Ma'had Tahfidz Qur'an Darul Abidin",
+      schoolSettings,
       students,
       competencies,
     };
     const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(backupData, null, 2))}`;
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute('href', jsonString);
-    downloadAnchor.setAttribute('download', `backup_rapot_daarul_abidin_${new Date().toISOString().slice(0, 10)}.json`);
+    downloadAnchor.setAttribute('download', `backup_rapot_darul_abidin_${new Date().toISOString().slice(0, 10)}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
@@ -134,6 +165,10 @@ export default function App() {
           if (parsed.competencies) {
             setCompetencies(parsed.competencies);
             saveStoredCompetencies(parsed.competencies);
+          }
+          if (parsed.schoolSettings) {
+            setSchoolSettings(parsed.schoolSettings);
+            saveStoredSchoolSettings(parsed.schoolSettings);
           }
           if (parsed.students.length > 0) {
             setActiveId(parsed.students[0].id);
@@ -211,6 +246,16 @@ export default function App() {
             >
               👥 Kelola Santri ({students.length})
             </button>
+            <button
+              onClick={() => setActiveTab('pengaturan')}
+              className={`py-3 text-xs font-bold border-b-2 transition ${
+                activeTab === 'pengaturan'
+                  ? 'border-emerald-700 text-emerald-800'
+                  : 'border-transparent text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              ⚙️ Pengaturan Mudir & Halaqoh
+            </button>
           </nav>
         </div>
       </div>
@@ -222,6 +267,7 @@ export default function App() {
             student={activeStudent}
             competencies={competencies}
             allStudents={students}
+            settings={schoolSettings}
             onSaveStudent={handleSaveStudent}
             onViewReport={() => setActiveTab('rapot')}
             onOpenStudentList={() => setActiveTab('santri')}
@@ -234,6 +280,7 @@ export default function App() {
             student={activeStudent}
             competencies={competencies}
             allStudents={students}
+            settings={schoolSettings}
             onBackToInput={() => setActiveTab('input')}
             onSelectAnotherStudent={() => setActiveTab('santri')}
           />
@@ -258,6 +305,15 @@ export default function App() {
             onViewReport={handleViewReportForStudent}
             onExportBackup={handleExportBackup}
             onImportBackup={handleImportBackup}
+          />
+        )}
+
+        {activeTab === 'pengaturan' && (
+          <SettingsDashboard
+            settings={schoolSettings}
+            onSaveSettings={handleSaveSchoolSettings}
+            onResetSettings={handleResetSchoolSettings}
+            studentsCount={students.length}
           />
         )}
       </main>

@@ -82,6 +82,21 @@ export interface StudentRankInfo {
   rankShort: string;
 }
 
+export interface SchoolSettings {
+  namaMudir: string;
+  nipMudir?: string;
+  jabatanMudir: string;
+  namaMusyrif: string;
+  nipMusyrif?: string;
+  namaHalaqoh: string;
+  tempatPenerbitan: string;
+  tanggalPenerbitan: string;
+  semester: 'Ganjil' | 'Genap';
+  tahunAjaran: string;
+  alamatKop: string;
+  syncToStudentsOnSave: boolean;
+}
+
 export interface ReportSummary {
   totalRataRata: number;
   nilaiAkhir: number;

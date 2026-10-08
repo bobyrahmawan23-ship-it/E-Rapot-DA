@@ -45,7 +45,7 @@ export const CompetencyDashboard: React.FC<CompetencyDashboardProps> = ({
   };
 
   const handleReset = () => {
-    if (window.confirm('Kembalikan semua deskripsi kompetensi dan KKM ke standar kurikulum Ma\'had Daarul Abidin?')) {
+    if (window.confirm('Kembalikan semua deskripsi kompetensi dan KKM ke standar kurikulum Ma\'had Darul Abidin?')) {
       onResetCompetencies();
       setSavedToast(true);
       setTimeout(() => setSavedToast(false), 3000);
@@ -66,7 +66,7 @@ export const CompetencyDashboard: React.FC<CompetencyDashboardProps> = ({
           <div>
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-200 text-xs font-semibold mb-2">
               <Sparkles className="w-3.5 h-3.5" />
-              Kurikulum Ma'had Daarul Abidin
+              Kurikulum Ma'had Darul Abidin
             </div>
             <h2 className="text-lg sm:text-xl font-black">
               Dasbor Penjelasan Kompetensi & KKM

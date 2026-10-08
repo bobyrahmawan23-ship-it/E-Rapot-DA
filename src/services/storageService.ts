@@ -1,11 +1,12 @@
-import { Student, SubjectCompetency, SubjectId, MusyrifUser, ReportCalculatedSubject, ReportSummary, StudentRankInfo } from '../types';
-import { DEFAULT_COMPETENCIES, DEFAULT_SUBJECTS, INITIAL_STUDENTS, DEFAULT_USERS, DEFAULT_KKM } from '../data/defaultData';
+import { Student, SubjectCompetency, SubjectId, MusyrifUser, ReportCalculatedSubject, ReportSummary, StudentRankInfo, SchoolSettings } from '../types';
+import { DEFAULT_COMPETENCIES, DEFAULT_SUBJECTS, INITIAL_STUDENTS, DEFAULT_USERS, DEFAULT_KKM, DEFAULT_SCHOOL_SETTINGS } from '../data/defaultData';
 
 const STORAGE_KEYS = {
   STUDENTS: 'erapot_da_students_v1',
   COMPETENCIES: 'erapot_da_competencies_v1',
   CURRENT_USER: 'erapot_da_current_user_v1',
   ACTIVE_STUDENT_ID: 'erapot_da_active_student_id_v1',
+  SCHOOL_SETTINGS: 'erapot_da_school_settings_v1',
 };
 
 // --- Students Storage ---
@@ -80,6 +81,38 @@ export function resetStoredCompetencies(): Record<SubjectId, SubjectCompetency> 
     return DEFAULT_COMPETENCIES;
   } catch {
     return DEFAULT_COMPETENCIES;
+  }
+}
+
+// --- School & Rapot Settings Storage ---
+export function getStoredSchoolSettings(): SchoolSettings {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.SCHOOL_SETTINGS);
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEYS.SCHOOL_SETTINGS, JSON.stringify(DEFAULT_SCHOOL_SETTINGS));
+      return DEFAULT_SCHOOL_SETTINGS;
+    }
+    return { ...DEFAULT_SCHOOL_SETTINGS, ...JSON.parse(raw) };
+  } catch (err) {
+    console.error('Error reading school settings from storage', err);
+    return DEFAULT_SCHOOL_SETTINGS;
+  }
+}
+
+export function saveStoredSchoolSettings(settings: SchoolSettings): void {
+  try {
+    localStorage.setItem(STORAGE_KEYS.SCHOOL_SETTINGS, JSON.stringify(settings));
+  } catch (err) {
+    console.error('Error saving school settings to storage', err);
+  }
+}
+
+export function resetStoredSchoolSettings(): SchoolSettings {
+  try {
+    localStorage.setItem(STORAGE_KEYS.SCHOOL_SETTINGS, JSON.stringify(DEFAULT_SCHOOL_SETTINGS));
+    return DEFAULT_SCHOOL_SETTINGS;
+  } catch {
+    return DEFAULT_SCHOOL_SETTINGS;
   }
 }
 
@@ -236,22 +269,24 @@ export function computeStudentReport(
   };
 }
 
-export function createNewStudent(namaMusyrif: string, halaqoh: string): Student {
+export function createNewStudent(namaMusyrif?: string, halaqoh?: string, settings?: SchoolSettings): Student {
   const emptyGrades: Record<SubjectId, { pts: number | null; pas: number | null }> = {} as any;
   DEFAULT_SUBJECTS.forEach((sub) => {
     emptyGrades[sub.id] = { pts: 80, pas: 80 };
   });
 
   const id = 'std-' + Date.now();
+  const currentSettings = settings || getStoredSchoolSettings();
+
   return {
     id,
     nama: 'Santri Baru',
     nis: `DA-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
-    kelas: halaqoh || 'Kelas VII - Halaqoh Utsman bin Affan',
-    semester: 'Genap',
-    tahunAjaran: '2025/2026',
-    namaMusyrif: namaMusyrif || 'Ustadz Ahmad Fauzi, S.Pd.I',
-    tanggalRapot: new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date()),
+    kelas: halaqoh || currentSettings.namaHalaqoh || 'Kelas VII - Halaqoh Utsman bin Affan',
+    semester: currentSettings.semester || 'Genap',
+    tahunAjaran: currentSettings.tahunAjaran || '2025/2026',
+    namaMusyrif: namaMusyrif || currentSettings.namaMusyrif || 'Ustadz Ahmad Fauzi, S.Pd.I',
+    tanggalRapot: currentSettings.tanggalPenerbitan || new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date()),
     grades: emptyGrades,
     additional: {
       levelStandarisasi: 'Level 1 (Pra Tahsin / Juz 30)',

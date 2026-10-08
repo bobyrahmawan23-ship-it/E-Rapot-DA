@@ -26,7 +26,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
     // Accept standard demo PIN/passwords or general musyrif
     if (matched) {
-      if (password === '123456' || password === 'daarulabidin' || password.length >= 4) {
+      if (password === '123456' || password === 'darulabidin' || password.length >= 4) {
         onLogin(matched);
         return;
       }
@@ -95,7 +95,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             <div className="w-20 h-20 mx-auto rounded-2xl bg-white border border-emerald-200 shadow-md p-2 flex items-center justify-center mb-3">
               <img 
                 src="/logo.svg" 
-                alt="Logo Ma'had Tahfidz Qur'an Daarul Abidin" 
+                alt="Logo Ma'had Tahfidz Qur'an Darul Abidin" 
                 className="w-full h-full object-contain"
               />
             </div>
@@ -105,7 +105,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             </span>
 
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 mt-2 tracking-tight">
-              DAARUL ABIDIN
+              DARUL ABIDIN
             </h1>
             <p className="text-xs text-slate-500 mt-1">
               Sistem Input Nilai PTS, PAS & E-Rapot Resmi (A4)

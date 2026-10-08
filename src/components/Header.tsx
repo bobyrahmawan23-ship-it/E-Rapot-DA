@@ -8,8 +8,8 @@ interface HeaderProps {
   currentUser: MusyrifUser | null;
   onLogout: () => void;
   onOpenInstallGuide: () => void;
-  activeTab: 'input' | 'rapot' | 'kompetensi' | 'santri';
-  setActiveTab: (tab: 'input' | 'rapot' | 'kompetensi' | 'santri') => void;
+  activeTab: 'input' | 'rapot' | 'kompetensi' | 'santri' | 'pengaturan';
+  setActiveTab: (tab: 'input' | 'rapot' | 'kompetensi' | 'santri' | 'pengaturan') => void;
   studentCount: number;
 }
 
@@ -44,7 +44,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white border border-emerald-200 shadow-xs flex items-center justify-center p-1 shrink-0 overflow-hidden">
                 <img 
                   src="/logo.svg" 
-                  alt="Logo Daarul Abidin" 
+                  alt="Logo Darul Abidin" 
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -52,14 +52,14 @@ export const Header: React.FC<HeaderProps> = ({
                 <div className="flex items-center gap-1.5">
                   <h1 className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight truncate flex items-center gap-1">
                     <span>E-Rapot</span>
-                    <span className="text-emerald-700 font-black">Daarul Abidin</span>
+                    <span className="text-emerald-700 font-black">Darul Abidin</span>
                   </h1>
                   <span className="hidden xs:inline-flex text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
                     PWA v1.0
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-500 truncate hidden sm:block">
-                  Ma'had Tahfidz Qur'an Daarul Abidin • Cianjur
+                  Ma'had Tahfidz Qur'an Darul Abidin • Cianjur
                 </p>
                 <p className="text-[10px] text-slate-400 truncate sm:hidden">
                   Sistem Nilai PTS & PAS

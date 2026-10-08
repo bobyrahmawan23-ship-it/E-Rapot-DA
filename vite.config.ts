@@ -14,9 +14,9 @@ export default defineConfig(() => {
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icon.svg', 'logo.svg'],
         manifest: {
           id: '/',
-          name: "E-Rapot Ma'had Daarul Abidin",
+          name: "E-Rapot Ma'had Darul Abidin",
           short_name: 'E-Rapot DA',
-          description: "Sistem Pencatatan Nilai Siswa PTS dan PAS Ma'had Tahfidz Qur'an Daarul Abidin Cianjur.",
+          description: "Sistem Pencatatan Nilai Siswa PTS dan PAS Ma'had Tahfidz Qur'an Darul Abidin Cianjur.",
           theme_color: '#0e8847',
           background_color: '#f8fafc',
           display: 'standalone',

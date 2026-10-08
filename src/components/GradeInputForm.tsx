@@ -18,7 +18,7 @@ import {
   Layers,
   GraduationCap
 } from 'lucide-react';
-import { Student, SubjectGrade, SubjectId, SubjectCompetency } from '../types';
+import { Student, SubjectGrade, SubjectId, SubjectCompetency, SchoolSettings } from '../types';
 import { DEFAULT_SUBJECTS, DEFAULT_KKM, POSITIVE_NOTES_TEMPLATES } from '../data/defaultData';
 import { calculateSubjectAverage, getGradePredicate, computeStudentReport } from '../services/storageService';
 
@@ -26,6 +26,7 @@ interface GradeInputFormProps {
   student: Student;
   competencies: Record<SubjectId, SubjectCompetency>;
   allStudents?: Student[];
+  settings?: SchoolSettings;
   onSaveStudent: (updated: Student) => void;
   onViewReport: () => void;
   onOpenStudentList: () => void;
@@ -36,6 +37,7 @@ export const GradeInputForm: React.FC<GradeInputFormProps> = ({
   student,
   competencies,
   allStudents,
+  settings,
   onSaveStudent,
   onViewReport,
   onOpenStudentList,
@@ -622,9 +624,34 @@ export const GradeInputForm: React.FC<GradeInputFormProps> = ({
       {/* =============================================================== */}
       {activeTabSection === 'identitas' && (
         <div className="bg-white rounded-3xl p-4 sm:p-5 border border-slate-200 shadow-2xs space-y-3.5">
-          <h3 className="text-sm sm:text-base font-black text-slate-900">
-            Identitas Santri & Administrasi Rapot
-          </h3>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h3 className="text-sm sm:text-base font-black text-slate-900">
+              Identitas Santri & Administrasi Rapot
+            </h3>
+            {settings && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    kelas: settings.namaHalaqoh || prev.kelas,
+                    namaMusyrif: settings.namaMusyrif || prev.namaMusyrif,
+                    tanggalRapot: settings.tanggalPenerbitan || prev.tanggalRapot,
+                    semester: settings.semester || prev.semester,
+                    tahunAjaran: settings.tahunAjaran || prev.tahunAjaran,
+                    updatedAt: new Date().toISOString(),
+                  }));
+                  setSaveToast(true);
+                  setTimeout(() => setSaveToast(false), 2000);
+                }}
+                className="text-[11px] font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-xl transition flex items-center gap-1 self-start sm:self-auto"
+                title="Terapkan Nama Musyrif, Halaqoh, dan Tanggal dari Pengaturan"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                Terapkan dari Pengaturan Halaqoh
+              </button>
+            )}
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>

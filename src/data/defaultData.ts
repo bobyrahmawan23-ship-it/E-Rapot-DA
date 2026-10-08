@@ -1,6 +1,21 @@
-import { SubjectMeta, SubjectId, SubjectCompetency, Student, MusyrifUser } from '../types';
+import { SubjectMeta, SubjectId, SubjectCompetency, Student, MusyrifUser, SchoolSettings } from '../types';
 
 export const DEFAULT_KKM = 75;
+
+export const DEFAULT_SCHOOL_SETTINGS: SchoolSettings = {
+  namaMudir: 'Ustadz Muhammad Ridwan, M.Ag',
+  nipMudir: '19870512 201201 1 002',
+  jabatanMudir: 'Mudir Ma\'had Darul Abidin',
+  namaMusyrif: 'Ustadz Ahmad Fauzi, S.Pd.I',
+  nipMusyrif: '19920815 201803 1 004',
+  namaHalaqoh: 'Kelas VII - Halaqoh Utsman bin Affan',
+  tempatPenerbitan: 'Cianjur',
+  tanggalPenerbitan: '20 Juni 2026',
+  semester: 'Genap',
+  tahunAjaran: '2025/2026',
+  alamatKop: 'KP. GUNTENG RT 03 RW 09 DS. BOJONG KEC. KARANGTENGAH KAB. CIANJUR',
+  syncToStudentsOnSave: true,
+};
 
 export const DEFAULT_SUBJECTS: SubjectMeta[] = [
   { id: 'tahsin_ilmi', name: 'Tahsin Ilmi', category: 'Al-Qur\'an & Tahfidz', shortName: 'Tahsin Ilmi' },
@@ -28,7 +43,7 @@ export const DEFAULT_COMPETENCIES: Record<SubjectId, SubjectCompetency> = {
   },
   standarisasi_bacaan: {
     kkm: 75,
-    description: 'Mencapai ketepatan dan keseragaman nada tartil sesuai standar mutu bacaan Ma\'had Tahfidz Qur\'an Daarul Abidin dengan ritme yang stabil.',
+    description: 'Mencapai ketepatan dan keseragaman nada tartil sesuai standar mutu bacaan Ma\'had Tahfidz Qur\'an Darul Abidin dengan ritme yang stabil.',
   },
   kemampuan_ziyadah: {
     kkm: 75,
